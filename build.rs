@@ -26,8 +26,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     builder.compile("lfs-sys");
 
+    let target = env::var("TARGET").expect("TARGET environment variable not set");
+    let cflags = env::var("CFLAGS").unwrap_or_default();
     let bindings = bindgen::Builder::default()
         .header("littlefs/lfs.h")
+        .clang_arg(format!("--target={}", target))
+        .clang_args(cflags.split_whitespace())
         .use_core()
         .allowlist_item("lfs_.*")
         .allowlist_item("LFS_.*")
